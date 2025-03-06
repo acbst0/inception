@@ -1,7 +1,12 @@
 FROM debian:latest
 
-RUN apt-get clean && apt-get autoremove -y && apt update && DEBIAN_FRONTEND=noninteractive apt upgrade -y && apt install nginx -y
+RUN apt-get update && apt-get upgrade && apt-get install -y \
+	nginx \
+	openssl \
+	certbot
 
-COPY conf/default /etc/nginx/sites-available/.
+COPY /tools/script.sh /tools/script.sh
 
-CMD ["nginx", "-g", "daemon off;"]
+RUN chmod +x /tools/script.sh
+
+CMD [ "nginx", "-g", "daemon off;" ]
