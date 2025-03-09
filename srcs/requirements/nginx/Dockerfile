@@ -1,12 +1,22 @@
 FROM debian:latest
 
-RUN apt-get update && apt-get upgrade && apt-get install -y \
-	nginx \
-	openssl \
-	certbot
+# Update and install dependencies
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+    nginx \
+    openssl \
+    && apt-get clean
 
-COPY /tools/script.sh /tools/script.sh
+# Copy the Nginx configuration file for the site
+COPY ./conf/default.conf /etc/nginx/sites-available/abostano.42.fr.conf
 
-RUN chmod +x /tools/script.sh
+# Create a symlink to enable the site in Nginx
+RUN ln -s /etc/nginx/sites-available/abostano.42.fr.conf /etc/nginx/sites-enabled/abostano.42.fr.conf
 
-CMD [ "nginx", "-g", "daemon off;" ]
+# Expose the HTTPS port
+EXPOSE 443
+
+# Stop signal
+STOPSIGNAL SIGQUIT
+
+# Command to run Nginx in the foreground
+CMD ["nginx", "-g", "daemon off;"]
