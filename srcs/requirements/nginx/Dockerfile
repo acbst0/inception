@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM debian:buster
 
 # Update and install dependencies
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
@@ -14,10 +14,9 @@ RUN rm -f /etc/nginx/sites-enabled/default && ln -s /etc/nginx/sites-available/a
 
 # Expose the HTTPS port
 EXPOSE 443
-EXPOSE 80
 
 # Stop signal
-STOPSIGNAL SIGQUIT
+STOPSIGNAL SIGTERM
 
 # Entrypoint betiğini kopyala ve çalıştırılabilir yap
 COPY ./tools/script.sh /script.sh
@@ -26,4 +25,4 @@ RUN chmod +x /script.sh
 RUN dos2unix script.sh
 
 # Default komut olarak entrypoint'i çalıştır
-CMD ["/bin/bash", "/script.sh"]
+ENTRYPOINT ["/script.sh"]

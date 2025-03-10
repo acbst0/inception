@@ -9,4 +9,4 @@ if [ ! -f /etc/ssl/certs/nginx-selfsigned.crt ]; then
     -subj "/C=TR/ST=Istanbul/L=Istanbul/O=Example/OU=IT/CN=abostano.42.fr"
 fi
 
-nginx -g "daemon off;"
+exec nginx -g "daemon off;"
