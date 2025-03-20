@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+  wordpress:
+    container_name: wp-cli
+    build: ./requirements/wordpress/
+    env_file:
+      - .env
+    expose:
+      - "9000"
+    volumes:
+      - ./requirements/wordpress/www/:/var/www/html/
+    networks:
+      - inception
+    restart: on-failure
+
   nginx:
     container_name: nginx
     build: ./requirements/nginx/
@@ -11,7 +24,13 @@ services:
       - "443:443"
     volumes:
       - ./requirements/nginx/conf/default.conf:/etc/nginx/sites-enabled/abostano.42.fr.conf
+      - ./requirements/wordpress/www/:/var/www/html/
+    networks:
+      - inception
+    depends_on:
+      - wordpress
     restart: always
 
-
-
+networks:
+  inception:
+    driver: bridge
