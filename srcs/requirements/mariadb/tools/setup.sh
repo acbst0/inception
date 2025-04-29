@@ -1,21 +1,24 @@
 #!/bin/bash
 
-# Veritabanı dizinlerini başlat
 service mysql start
 
-# Root password'u ayarla
-mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${mysql_root_password}'; FLUSH PRIVILEGES;"
+until mysqladmin ping --silent; do
+    echo "MariaDB başlatılıyor..."
+    sleep 2
+done
 
-# Yeni veritabanı oluştur
-mysql -u root -p${mysql_root_password} -e "CREATE DATABASE IF NOT EXISTS ${database_name};"
+sleep 5
 
-# Yeni kullanıcı oluştur ve ona yetki ver
-mysql -u root -p${mysql_root_password} -e "CREATE USER IF NOT EXISTS '${mysql_user}'@'%' IDENTIFIED BY '${mysql_password}';"
-mysql -u root -p${mysql_root_password} -e "GRANT ALL PRIVILEGES ON ${database_name}.* TO '${mysql_user}'@'%';"
-mysql -u root -p${mysql_root_password} -e "FLUSH PRIVILEGES;"
+cat << EOF > init.sql
+ALTER USER 'root'@'localhost' IDENTIFIED BY '${mysql_root_password}';
+CREATE DATABASE IF NOT EXISTS ${database_name};
+CREATE USER IF NOT EXISTS '${mysql_user}'@'%' IDENTIFIED BY '${mysql_password}';
+GRANT ALL PRIVILEGES ON ${database_name}.* TO '${mysql_user}'@'%';
+FLUSH PRIVILEGES;
+EOF
 
-# Servisi düzgün şekilde kapat
-mysqladmin -u root -p${mysql_root_password} shutdown
+mysql -u root < init.sql || mysql --protocol=TCP -u root < init.sql
 
-# Sonra mariadb'yi foreground olarak başlat
+mysqladmin -u root -p${mysql_root_password} shutdown || mysqladmin --protocol=TCP -u root -p${mysql_root_password} shutdown
+
 exec mysqld_safe

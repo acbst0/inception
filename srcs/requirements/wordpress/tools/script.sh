@@ -26,7 +26,10 @@ wp core download --allow-root
 cp /wp-config.php /var/www/html/wp-config.php
 
 # MariaDB tam başlasın diye bekle
-sleep 10
+until mysqladmin ping -h mariadb --silent; do
+    echo "MariaDB başlatılıyor..."
+    sleep 2
+done
 
 # WordPress kurulumu
 wp core install \

@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     dos2unix
 
 # Config dosyasını kopyala (opsiyonel)
+COPY ./conf/my.cnf /etc/my.cnf
 COPY ./conf/my.cnf /etc/mysql/my.cnf
 
 # Başlangıç scriptini kopyala
