@@ -5,6 +5,8 @@ services:
     container_name: mariadb
     build: ./requirements/mariadb/
     restart: on-failure
+    expose:
+      - "3306"
     env_file:
       - .env
     volumes:
@@ -20,7 +22,7 @@ services:
     expose:
       - "9000"
     volumes:
-      - ./requirements/wordpress/www/:/var/www/html/
+      - wp_data:/var/www/html/
     networks:
       - inception
     restart: on-failure
@@ -36,7 +38,7 @@ services:
       - "443:443"
     volumes:
       - ./requirements/nginx/conf/default.conf:/etc/nginx/sites-enabled/abostano.42.fr.conf
-      - ./requirements/wordpress/www/:/var/www/html/
+      - wp_data:/var/www/html/
     networks:
       - inception
     depends_on:
@@ -49,3 +51,4 @@ networks:
 
 volumes:
   mariadb_data:
+  wp_data:
