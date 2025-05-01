@@ -8,10 +8,6 @@ export wordpress_admin
 export wordpress_admin_password
 export wordpress_admin_email
 
-echo "WordPress admin: ${wordpress_admin}"
-echo "WordPress admin password: ${wordpress_admin_password}"
-echo "WordPress admin email: ${wordpress_admin_email}"
-
 mkdir -p /run/php
 chown www-data:www-data /run/php
 chmod 755 /run/php
