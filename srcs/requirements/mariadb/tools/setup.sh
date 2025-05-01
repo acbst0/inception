@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export mysql_password=$(cat /run/secrets/db_password)
+export mysql_root_password=$(cat /run/secrets/db_root_password)
+
 service mysql start
 
 until mysqladmin ping --silent; do

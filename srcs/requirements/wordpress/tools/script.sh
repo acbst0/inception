@@ -1,5 +1,17 @@
 #!/bin/bash
 
+export mysql_password=$(cat /run/secrets/db_password)
+wordpress_admin=$(head -n 1 /run/secrets/credentials | tr -d '\r\n' | xargs)
+wordpress_admin_password=$(sed -n "2p" /run/secrets/credentials | tr -d '\r\n' | xargs)
+wordpress_admin_email=$(sed -n "3p" /run/secrets/credentials | tr -d '\r\n' | xargs)
+export wordpress_admin
+export wordpress_admin_password
+export wordpress_admin_email
+
+echo "WordPress admin: ${wordpress_admin}"
+echo "WordPress admin password: ${wordpress_admin_password}"
+echo "WordPress admin email: ${wordpress_admin_email}"
+
 # PHP-FPM için gerekli dizinleri hazırla
 mkdir -p /run/php
 chown www-data:www-data /run/php
@@ -26,7 +38,7 @@ wp core download --allow-root
 cp /wp-config.php /var/www/html/wp-config.php
 
 # MariaDB tam başlasın diye bekle
-until mysqladmin ping -h mariadb --silent; do
+until mysqladmin ping -h ${mysql_host} --silent; do
     echo "MariaDB başlatılıyor..."
     sleep 2
 done
