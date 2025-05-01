@@ -44,7 +44,6 @@ services:
     ports:
       - "443:443"
     volumes:
-      - ./requirements/nginx/conf/default.conf:/etc/nginx/sites-enabled/abostano.42.fr.conf
       - wp_data:/var/www/html/
     networks:
       - inception
